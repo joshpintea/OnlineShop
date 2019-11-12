@@ -1,0 +1,6 @@
+djangorestframework
+django
+django-extensions
+django-rest-framework
+django-oauth-toolkit
+djangorestframework-oauth
