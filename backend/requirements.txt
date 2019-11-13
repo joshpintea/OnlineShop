@@ -1,5 +1,5 @@
+django==2.2.0
 djangorestframework
-django
 django-extensions
 django-rest-framework
 django-oauth-toolkit
