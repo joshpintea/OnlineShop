@@ -1,0 +1,8 @@
+
+.page-content {
+    margin-top: 110px;
+}
+
+.disabled-link {
+    pointer-events: none;
+}

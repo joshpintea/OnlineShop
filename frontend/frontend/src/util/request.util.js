@@ -7,8 +7,8 @@ export function handleResponse(response) {
             const error = JSON.stringify(data);
 
             if (response.status === 401 || response.status === 403) {
-                localStorage.clear();
-                window.location.reload();
+                // localStorage.clear();
+                // window.location.reload();
             }
 
             return Promise.reject(error);
