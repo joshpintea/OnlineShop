@@ -37,18 +37,18 @@ class Album(models.Model):
         return '%s' % self.title
 
 
-class AlbumToCart(models.Model):
-    album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    quantity = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
-
-    def __str__(self):
-        return '%s - %s' % (self.quantity, self.album.title)
-
-
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    albums_and_quantity = models.ManyToManyField(AlbumToCart)
+
+
+class AlbumToCart(models.Model):
+    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    quantity = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    cart = models.ForeignKey(Cart, related_name='albums_and_quantity', on_delete=models.CASCADE, default=None)
+
+    def __str__(self):
+        return '%s - %s' % (self.quantity, self.album.title)
 
 
 class Order(models.Model):

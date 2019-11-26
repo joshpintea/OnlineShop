@@ -94,23 +94,21 @@ def add_album_to_cart(request):
     Add product to cart for the logged user
     """
     serializer = AlbumToCartSerializer(request.data)
-
     cart = get_logged_user_cart(request.user)
     album = Album.objects.get(pk=serializer.data['album']['id'])
-    album_to_cart = cart.albums_and_quantity.filter(album=album)
-    if album_to_cart.count() == 0:
+
+    album_to_cart_set = AlbumToCart.objects.filter(album=album, cart=cart)
+    if album_to_cart_set.count() == 0:
         if serializer.data['quantity'] > 0:
-            album_to_cart = AlbumToCart(quantity=serializer.data['quantity'], album=album)
+            album_to_cart = AlbumToCart(quantity=serializer.data['quantity'], album=album, cart=cart)
             album_to_cart.save()
-            cart.albums_and_quantity.add(album_to_cart)
-            cart.save()
     else:
         if serializer.data['quantity'] > 0:
-            album_to_cart = album_to_cart[0]
+            album_to_cart = album_to_cart_set[0]
             album_to_cart.quantity = serializer.data['quantity']
             album_to_cart.save()
         else:
-            album_to_cart = album_to_cart[0]
+            album_to_cart = album_to_cart_set[0]
             album_to_cart.delete()
 
     return Response(CartSerializer(cart).data)

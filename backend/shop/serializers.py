@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    albums_and_quantity = AlbumToCartSerializer(many=True)
+    albums_and_quantity = AlbumToCartSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cart
