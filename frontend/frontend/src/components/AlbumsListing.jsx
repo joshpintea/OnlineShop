@@ -3,6 +3,7 @@ import {AlbumCard} from "./AlbumCard";
 
 import './grid-stupid.css'
 import {Link} from "react-router-dom";
+import {constants, userService} from "../service";
 
 class AlbumsListing extends React.Component {
     constructor(props) {
@@ -37,6 +38,12 @@ class AlbumsListing extends React.Component {
             });
         }
 
+        const startIndex = (this.state.albumsResponse.page-1) * constants.pagination.perPage + 1;
+        let endIndex = this.state.albumsResponse.page * constants.pagination.perPage;
+        if (endIndex > this.state.albumsResponse.count) {
+            endIndex = this.state.albumsResponse.count;
+        }
+
         return (
             <div className="albums-listing">
                 {this.state.filter &&
@@ -58,18 +65,25 @@ class AlbumsListing extends React.Component {
                 }
                 {this.state.albumsResponse.results !== undefined && this.state.albumsResponse.results.length > 0 &&
                 <div className={"pagination"} style={{float:"right"}}>
+                    {!constants.pagination.defaultPagination &&
+                    <div>Showing from {startIndex} to {endIndex} of {this.state.albumsResponse.count}</div>
+                    }
                     <Link to={{
                         pathname: '/home/' + (this.state.albumsResponse.page - 1) + ((this.state.filter) ? "?search_value=" + this.state.searchQuery : ""),
                         state: "refresh",
                         page: (this.state.albumsResponse.page - 1)
                     }}
-                          className={(this.state.albumsResponse.previous === null) ? 'disabled-link' : ''}> Previous </Link>
+                          className={(this.state.albumsResponse.previous === null) ? 'disabled-link nav-link waves-effect' : 'nav-link waves-effect'}>
+                        <i className="fas fa-arrow-left"/>
+                    </Link>
                     <Link to={{
                         pathname: '/home/' + (this.state.albumsResponse.page + 1) + ((this.state.filter) ? "?search_value=" + this.state.searchQuery : ""),
                         state: "refresh",
                         page: (this.state.albumsResponse.page + 1)
                     }}
-                          className={(this.state.albumsResponse.next === null) ? 'disabled-link' : ''}> Next </Link>
+                          className={(this.state.albumsResponse.next === null) ? 'disabled-link nav-link waves-effect' : 'nav-link waves-effect'}>
+                        <i className="fas fa-arrow-right"/>
+                    </Link>
                 </div>
                 }
             </div>

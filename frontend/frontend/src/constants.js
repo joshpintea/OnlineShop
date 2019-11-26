@@ -21,6 +21,11 @@ export const constants = {
         api: new ApiRoutes(),
     },
     savedToken: 'savedToken',
-    loggedUser: 'loggedUser'
+    loggedUser: 'loggedUser',
+    pagination: {
+        defaultPagination: false,
+        perPage: 2
+    }
+
 };
 

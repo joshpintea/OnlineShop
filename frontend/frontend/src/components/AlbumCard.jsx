@@ -1,8 +1,8 @@
 import React from 'react';
 import {albumService} from "../service";
 import {connect} from "react-redux";
-import {addAlbumToCart} from "../js/actions";
-import {imageUtil} from "../util";
+import {addAlbumToCart, fetchCart} from "../js/actions";
+import {AddToCartForm} from "./AddToCartForm";
 
 const mapStateToProps = state => {
     return {albumsInCart: state.albums}
@@ -10,9 +10,10 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
     return {
-        addAlbumToCart: cart => dispatch(addAlbumToCart(cart))
+        fetchInitial: cart => dispatch(fetchCart(cart))
     }
 }
+
 
 class AlbumCardMin extends React.Component {
     constructor(props) {
@@ -22,31 +23,19 @@ class AlbumCardMin extends React.Component {
             album: props.album,
             albumsInCart: props.albumsInCart
         };
-
-        this.addToCart = this.addToCart.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({album: nextProps.album, albumsInCart: nextProps.albumsInCart})
     }
 
-    addToCart() {
-        albumService.addToCart(this.state.album).then(
-            response => {
-                this.props.addAlbumToCart(this.state.album);
-            }, error => {
-                console.log(error);
-            }
-        )
-    }
 
     render() {
         const {album, albumsInCart} = this.state;
-
-        let alreadyInCard = false;
+        let quantity = 0;
         for (let i = 0 ; i < albumsInCart.length; i++) {
-            if (albumsInCart[i].id === album.id) {
-                alreadyInCard = true
+            if (albumsInCart[i].album.id === album.id) {
+                quantity = albumsInCart[i].quantity
             }
         }
 
@@ -69,10 +58,10 @@ class AlbumCardMin extends React.Component {
                     </h5>
 
                     <h4 className="font-weight-bold blue-text">
-                        <strong>{album.price} $</strong>
+                        <strong>{album.price} LEI</strong>
                     </h4>
 
-                    <button onClick={this.addToCart} disabled={alreadyInCard}>Add to cart</button>
+                    <AddToCartForm quantity={quantity} album={album}/>
 
                 </div>
 

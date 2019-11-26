@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from django.contrib.auth.models import User
-from shop.models import Album, Song, Cart, Order
+from shop.models import Album, Song, Cart, Order, AlbumToCart
 
 
 class SongSerializer(serializers.ModelSerializer):
@@ -16,6 +16,14 @@ class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = ['id', 'title', 'price', 'songs', 'description', 'album_type', 'album_image']
+
+
+class AlbumToCartSerializer(serializers.ModelSerializer):
+    album = AlbumSerializer()
+
+    class Meta:
+        model = AlbumToCart
+        fields = ['id', 'album', 'quantity']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,11 +44,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    albums = AlbumSerializer(many=True)
+    albums_and_quantity = AlbumToCartSerializer(many=True)
 
     class Meta:
         model = Cart
-        fields = ['user', 'active', 'albums']
+        fields = ['user', 'active', 'albums_and_quantity']
 
 
 class OrderSerializer(serializers.ModelSerializer):

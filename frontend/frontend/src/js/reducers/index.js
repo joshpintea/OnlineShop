@@ -14,7 +14,7 @@ function rootReducer(state = initialState, action) {
         })
     } else if (action.type === FETCH_INITIAL) {
         return Object.assign({}, state, {
-            albums: action.cart.albums
+            albums: action.cart.albums_and_quantity
         });
     } else if (action.type === CLEAR) {
         return Object.assign( {}, state, {

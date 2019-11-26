@@ -3,9 +3,11 @@ import {connect} from "react-redux";
 import {albumService} from "../service";
 import {addAlbumToCart} from "../js/actions";
 import {imageUtil} from "../util";
+import {AddToCartForm} from "./AddToCartForm";
 
 
 const mapStateToProps = state => {
+    console.log(state.albums);
     return {albumsInCart: state.albums};
 };
 
@@ -28,7 +30,9 @@ class AlbumDetailsComponent extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({album: nextProps.album, albumsInCart: nextProps.albumsInCart});
+        console.log("next", nextProps);
+        this.setState({album: nextProps.album,
+            albumsInCart: nextProps.albumsInCart});
     }
 
     createSongsTable(columns, objects) {
@@ -89,13 +93,14 @@ class AlbumDetailsComponent extends React.Component {
 
     render() {
         const {album, albumsInCart} = this.state;
-        let alreadyInCard = false;
+        let quantity = 0;
+
         for (let i = 0 ; i < albumsInCart.length; i++) {
-            if (albumsInCart[i].id === album.id) {
-                alreadyInCard = true
+            if (albumsInCart[i].album.id === album.id) {
+                quantity = albumsInCart[i].quantity;
             }
         }
-        console.log(album);
+
         return (
             <div>
             {album.id !== undefined &&
@@ -130,12 +135,7 @@ class AlbumDetailsComponent extends React.Component {
 
                                     <p>{album.description}</p>
 
-                                    <form className="d-flex justify-content-left">
-                                        <button className="btn btn-primary btn-md my-0 p" type="submit" disabled={alreadyInCard} onClick={this.addToCart}> Add to cart
-                                            <i className="fas fa-shopping-cart ml-1"></i>
-                                        </button>
-
-                                    </form>
+                                    <AddToCartForm album={album} quantity={quantity}/>
 
                                 </div>
 

@@ -14,7 +14,12 @@ function getAll(pageNumber, searchValue) {
         method: 'GET',
         headers: authHeader()
     };
-    return fetch(constants.routes.api.baseAlbumUrl + "?page=" + pageNumber + "&&search=" + searchValue, requestOptions).then(handleResponse)
+
+    return fetch(constants.routes.api.baseAlbumUrl
+                + "?page=" + pageNumber
+                + "&&search=" + searchValue
+                + ((!constants.pagination.defaultPagination)
+                            ? '&&page_size='+constants.pagination.perPage : ''), requestOptions).then(handleResponse)
 }
 
 function addToCart(album) {

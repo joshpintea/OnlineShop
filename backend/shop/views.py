@@ -3,14 +3,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
-from shop.models import Album, Song, Cart, Order
+from shop.models import Album, Song, Cart, Order, AlbumToCart
 from shop.pagination import SmallPagesPagination
-from shop.serializers import AlbumSerializer, SongSerializer, UserSerializer, CartSerializer, OrderSerializer
+from shop.serializers import AlbumSerializer, SongSerializer, UserSerializer, CartSerializer, OrderSerializer, \
+    AlbumToCartSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
 
 import datetime
+
 
 class SongList(generics.ListAPIView):
     queryset = Song.objects.all()
@@ -92,18 +93,27 @@ def add_album_to_cart(request):
     """
     Add product to cart for the logged user
     """
-    serializer = AlbumSerializer(request.data)
+    serializer = AlbumToCartSerializer(request.data)
 
     cart = get_logged_user_cart(request.user)
+    album = Album.objects.get(pk=serializer.data['album']['id'])
+    album_to_cart = cart.albums_and_quantity.filter(album=album)
+    if album_to_cart.count() == 0:
+        if serializer.data['quantity'] > 0:
+            album_to_cart = AlbumToCart(quantity=serializer.data['quantity'], album=album)
+            album_to_cart.save()
+            cart.albums_and_quantity.add(album_to_cart)
+            cart.save()
+    else:
+        if serializer.data['quantity'] > 0:
+            album_to_cart = album_to_cart[0]
+            album_to_cart.quantity = serializer.data['quantity']
+            album_to_cart.save()
+        else:
+            album_to_cart = album_to_cart[0]
+            album_to_cart.delete()
 
-    album = Album.objects.get(pk=serializer.data['id'])
-
-    cart.albums.add(album)
-
-    cart.save()
-
-    cart_serializer = CartSerializer(cart)
-    return Response(cart_serializer.data)
+    return Response(CartSerializer(cart).data)
 
 
 @permission_classes([AllowAny])
