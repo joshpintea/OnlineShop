@@ -4,3 +4,5 @@ django-extensions==2.2.5
 django-rest-framework
 django-oauth-toolkit
 djangorestframework-oauth
+django-cors-headers==3.2.0
+Pillow
